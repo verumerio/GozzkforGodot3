@@ -3,8 +3,6 @@ extends Node
 #ChannelID를 원하는 방송에 맞춰서 변형해 주세요. 방송인의 주소 제일 뒤에있는 문자열이 고유 Channel ID 입니다.
 export var ChannelID = ''
 export var ChannelIDDirect = ''
-export var NID_AUT = ''
-export var NID_SES = ''
 #성인전용을 걸어놨을 경우 ChatChannelID가 검색 안되는 문제가 있습니다. 커스텀으로 Chat Channel ID를 기입해서 우회할 수 있도록 할 예정입니다.
 var ChatChannelID:String = ''
 var AccessToken = null
@@ -22,11 +20,6 @@ signal chatReceived(Nickname,Msg)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#Channel ID를 통해서 Chat Channel ID를 찾습니다.
-	var cookie = []
-	var NID1 = '"NID_AUT": "%s"'%[NID_AUT]
-	var NID2 = '"NID_SES": "%s"'%[NID_SES]
-	cookie.push_back(NID1)
-	cookie.push_back(NID2)
 	var HTTPSREQ = 'https://api.chzzk.naver.com/polling/v2/channels/%s/live-status'%ChannelID
 	var HTTP = HTTPRequest.new()
 	add_child(HTTP)
@@ -34,7 +27,7 @@ func _ready():
 #	HTTP.request_completed.connect(_on_cid_request_completed)
 	#HTTP.request(HTTPSREQ)
 	if ChannelIDDirect == '':
-		HTTP.request(HTTPSREQ,cookie)
+		HTTP.request(HTTPSREQ)
 	else :
 		ChatChannelID = ChannelIDDirect
 #	await HTTP.request_completed
@@ -46,7 +39,7 @@ func _ready():
 	add_child(TOKENHTTP)
 #	TOKENHTTP.request_completed.connect(_on_token_request_completed)
 	TOKENHTTP.connect("request_completed",self,"_on_token_request_completed")
-	TOKENHTTP.request(TokenURL,cookie)
+	TOKENHTTP.request(TokenURL)
 	yield(get_tree().create_timer(1),"timeout")
 	print_debug(AccessToken)
 	#yield(TOKENHTTP.request_completed,"finished")
