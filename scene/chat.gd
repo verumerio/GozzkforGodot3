@@ -92,6 +92,7 @@ func writetxt(Message):
 				stamp.expand=true
 				stamp.rect_min_size.x=30
 				stamp.rect_min_size.y=30
+				stamp.rect_size.y=30
 				$HBoxContainer.add_child(stamp)
 				Message.erase(0,tempchar.length())
 		if !checksum :

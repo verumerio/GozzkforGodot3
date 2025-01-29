@@ -102,7 +102,9 @@ func _on_data():
 			if eachBody.profile == null:continue
 			var Profile = parse_json(eachBody['profile'])
 			var extras = parse_json(eachBody['extras'])
-			if Profile.has('nickname')&&extras['emojis'].size()==0:
+			if extras['osType']=="IOS":
+				emit_signal("chatReceived",Profile['nickname'],eachBody['msg'])
+			elif Profile.has('nickname')&&extras['emojis'].size()==0:
 				emit_signal("chatReceived",Profile['nickname'],eachBody['msg'])
 			elif Profile.has('nickname')&&extras['emojis'].size()>0:
 				emit_signal("emmojiReceived",Profile['nickname'],eachBody['msg'],extras['emojis'])
