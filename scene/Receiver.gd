@@ -17,6 +17,7 @@ var peerID
 var stats
 const REQTICK = 1.0
 signal chatReceived(Nickname,Msg)
+signal emmojiReceived(Nickname,Msg,Emojis)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#Channel ID를 통해서 Chat Channel ID를 찾습니다.
@@ -30,8 +31,7 @@ func _ready():
 		HTTP.request(HTTPSREQ)
 	else :
 		ChatChannelID = ChannelIDDirect
-#	await HTTP.request_completed
-	yield(get_tree().create_timer(1),"timeout")
+	yield(HTTP,"request_completed")
 	print_debug(ChatChannelID)
 	#Channel 에 접근 할 수 있게 해주는 Token을 받습니다.
 	var TokenURL = 'https://comm-api.game.naver.com/nng_main/v1/chats/access-token?channelId=%s&chatType=STREAMING'%ChatChannelID
@@ -40,9 +40,8 @@ func _ready():
 #	TOKENHTTP.request_completed.connect(_on_token_request_completed)
 	TOKENHTTP.connect("request_completed",self,"_on_token_request_completed")
 	TOKENHTTP.request(TokenURL)
-	yield(get_tree().create_timer(1),"timeout")
+	yield(TOKENHTTP,"request_completed")
 	print_debug(AccessToken)
-	#yield(TOKENHTTP.request_completed,"finished")
 	socket.connect("connection_closed", self, "_closed")
 	socket.connect("connection_error", self, "_closed")
 	socket.connect("connection_established", self, "_on_connected")
@@ -56,7 +55,6 @@ func _ready():
 		print("connected to chat server")
 	yield(get_tree().create_timer(1),"timeout")
 	print_debug(socket.get_connection_status())
-	#socket.connect_to_url('wss://kr-ss3.chat.naver.com/chat')
 	ready=true
 	
 
@@ -92,7 +90,6 @@ func _on_request_completed(result, response_code, headers, body):
 	
 
 func _on_token_request_completed(result, response_code, headers, body):
-	#AccessToken = parse_json(body.get_string_from_utf8())['content']['accessToken']
 	var dic = parse_json(body.get_string_from_utf8())
 	var dic2 = dic['content']
 	AccessToken = dic2["accessToken"]
@@ -104,9 +101,12 @@ func _on_data():
 		for eachBody in bdy:
 			if eachBody.profile == null:continue
 			var Profile = parse_json(eachBody['profile'])
-			if Profile.has('nickname'):
-				#print_debug(str(Profile['nickname'])+"/"+str(eachBody['msg']))
+			var extras = parse_json(eachBody['extras'])
+			if Profile.has('nickname')&&extras['emojis'].size()==0:
 				emit_signal("chatReceived",Profile['nickname'],eachBody['msg'])
+			elif Profile.has('nickname')&&extras['emojis'].size()>0:
+				emit_signal("emmojiReceived",Profile['nickname'],eachBody['msg'],extras['emojis'])
+				
 
 	
 func _on_send(var sended):

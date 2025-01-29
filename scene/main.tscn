@@ -18,6 +18,7 @@ grow_vertical = 0
 alignment = 2
 
 [node name="Receiver" parent="." instance=ExtResource( 1 )]
-ChannelIDDirect = "N1ckrZ"
+ChannelID = "86504b3a47ac81bb47276ecda05398b2"
 
 [connection signal="chatReceived" from="Receiver" to="." method="_on_Receiver_chatReceived"]
+[connection signal="emmojiReceived" from="Receiver" to="." method="_on_Receiver_emmojiReceived"]

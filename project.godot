@@ -13,9 +13,15 @@ _global_script_classes=[ {
 "class": "Chat",
 "language": "GDScript",
 "path": "res://scene/chat.gd"
+}, {
+"base": "Reference",
+"class": "GifReader",
+"language": "GDScript",
+"path": "res://addons/gif-importer/GIFReader.gd"
 } ]
 _global_script_class_icons={
-"Chat": ""
+"Chat": "",
+"GifReader": ""
 }
 
 [application]
@@ -30,6 +36,10 @@ window/size/width=1280
 window/size/height=720
 window/size/resizable=false
 window/stretch/aspect="keep"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/gif-importer/plugin.cfg" )
 
 [gui]
 
