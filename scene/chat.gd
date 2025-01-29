@@ -37,9 +37,10 @@ func imgload(imgurl,imgnum):
 	var imgreq = HTTPRequest.new()
 	add_child(imgreq)
 	imgreq.connect("request_completed",self,"_img_request")
-	if imgurl.substr(imgurl.length()-3) == "gif" :
+	if imgurl.substr(imgurl.length()-3) == "gif" || imgurl.substr(imgurl.length()-3) == "GIF" :
 		imgreq.download_file = "user://"+imgnum+".gif"
 	else:
+		print(imgurl)
 		imgreq.download_file = "user://"+imgnum+".png"
 	imgreq.request(imgurl)
 	yield(imgreq,"request_completed")
@@ -81,7 +82,7 @@ func writetxt(Message):
 		checksum = false
 		for keyz in emojiDic.keys():
 			var tempchar = "{:"+keyz+":}"
-			if Message.find(tempchar) == 0 :
+			if Message.find(tempchar) == 0 && !checksum :
 				checksum = true
 				var newcharlabel = NicknameLabel.duplicate()
 				newcharlabel.text = temp

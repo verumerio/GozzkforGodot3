@@ -29,9 +29,10 @@ func _ready():
 	#HTTP.request(HTTPSREQ)
 	if ChannelIDDirect == '':
 		HTTP.request(HTTPSREQ)
+		yield(HTTP,"request_completed")
 	else :
 		ChatChannelID = ChannelIDDirect
-	yield(HTTP,"request_completed")
+	
 	print_debug(ChatChannelID)
 	#Channel 에 접근 할 수 있게 해주는 Token을 받습니다.
 	var TokenURL = 'https://comm-api.game.naver.com/nng_main/v1/chats/access-token?channelId=%s&chatType=STREAMING'%ChatChannelID
@@ -93,6 +94,7 @@ func _on_token_request_completed(result, response_code, headers, body):
 	var dic = parse_json(body.get_string_from_utf8())
 	var dic2 = dic['content']
 	AccessToken = dic2["accessToken"]
+	print(AccessToken)
 	
 func _on_data():
 	var payload = parse_json(socket.get_peer(1).get_packet().get_string_from_utf8())
@@ -102,7 +104,11 @@ func _on_data():
 			if eachBody.profile == null:continue
 			var Profile = parse_json(eachBody['profile'])
 			var extras = parse_json(eachBody['extras'])
-			if extras['osType']=="IOS":
+			if 'tierNo' in extras && !'osType' in extras:
+				print("subscription user!")
+			elif 'donationType' in extras :
+				print("donation arrived! / " + str(extras['payAmount'] + "cheese!"))
+			elif extras['osType']=="IOS":
 				emit_signal("chatReceived",Profile['nickname'],eachBody['msg'])
 			elif Profile.has('nickname')&&extras['emojis'].size()==0:
 				emit_signal("chatReceived",Profile['nickname'],eachBody['msg'])
