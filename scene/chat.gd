@@ -37,12 +37,16 @@ func imgload(imgurl,imgnum):
 	var imgreq = HTTPRequest.new()
 	add_child(imgreq)
 	imgreq.connect("request_completed",self,"_img_request")
-	if imgurl.substr(imgurl.length()-3) == "gif" || imgurl.substr(imgurl.length()-3) == "GIF" :
+	# ?들어간 URL처리 분기 필요
+	if "?" in imgurl :
+		imgurl = imgurl.split("?")[0]
+	if imgurl.substr(imgurl.length()-3) == "gif" or imgurl.substr(imgurl.length()-3) == "GIF" :
 		imgreq.download_file = "user://"+imgnum+".gif"
+		imgreq.request(imgurl+"")
 	else:
 		print(imgurl)
 		imgreq.download_file = "user://"+imgnum+".png"
-	imgreq.request(imgurl)
+		imgreq.request(imgurl+"?type=f60_60")
 	yield(imgreq,"request_completed")
 	if imgurl.substr(imgurl.length()-3) == "gif" :
 		emojiDic[str(imgnum)] = convgif("user://"+imgnum+".gif")
@@ -67,12 +71,10 @@ func convgif(var source_file):
 	var tex = GReader.read(source_file)
 	if tex == null:
 		return FAILED
-	var sf = SpriteFrames.new()
-	var minLength = 1000
-	var maxLength = 0
+	#var sf = SpriteFrames.new()
 	#sf.add_frame("default", tex.get_frame_texture(0))
 	img = tex
-	return img
+	return tex
 
 func writetxt(Message):
 	print(emojiDic)

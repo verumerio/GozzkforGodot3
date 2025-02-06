@@ -19,10 +19,10 @@ class LSBLZWBitUnpacker:
 		return value | (1 << index)
 
 	func get_byte():
-		if chunk_stream.size()>byte_index :
+		if(byte_index<chunk_stream.size()):
 			byte = chunk_stream[byte_index]
-			byte_index += 1
-			bit_index = 0
+		byte_index += 1
+		bit_index = 0
 
 	func read_bits(bits_count: int) -> int:
 		var result: int = 0

@@ -193,7 +193,6 @@ func decompress_lzw(code_stream_data: PoolByteArray, min_code_size: int, colors:
 			prevcode = code
 		else:  # if NO
 			# let k be the first index of {PREVCODE}
-			break
 			var prevcode_entry: CodeEntry = code_table.get(prevcode)
 			var k: CodeEntry = CodeEntry.new([prevcode_entry.sequence[0]])
 			# output {PREVCODE} + k to index stream

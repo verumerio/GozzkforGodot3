@@ -123,7 +123,7 @@ func read(source_file):
 			pos = pos + 1
 	animated_texture.frames = frame_number
 	#return animated_texture
-	return animated_texture[0]
+	return animated_texture.get_frame_texture(0)
 
 func get_subblock(data, pos):
 	if data[pos] == 0:
